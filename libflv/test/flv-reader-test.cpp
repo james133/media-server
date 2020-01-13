@@ -54,7 +54,7 @@ static int onFLV(void* /*param*/, int codec, const void* data, size_t bytes, uin
 	}
 	else if (FLV_VIDEO_H264 == codec || FLV_VIDEO_H265 == codec)
 	{
-		printf("diff: %03d/%03d", (int)(pts - v_pts), (int)(dts - v_dts));
+		printf("diff: %03d/%03d %s", (int)(pts - v_pts), (int)(dts - v_dts), flags ? "[I]" : "");
 		v_pts = pts;
 		v_dts = dts;
 
@@ -93,7 +93,7 @@ void flv_reader_test(const char* file)
 
 	int type, r = 0;
 	uint32_t timestamp;
-	while ((r = flv_reader_read(reader, &type, &timestamp, packet, sizeof(packet))) > 0)
+	while ((r = flv_reader_read(reader, &type, &timestamp, packet, sizeof(packet))) >= 0)
 	{
 		r = flv_demuxer_input(flv, type, packet, r, timestamp);
 		if (r < 0)

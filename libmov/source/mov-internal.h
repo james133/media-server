@@ -39,6 +39,8 @@
 #define MOV_MP4V MOV_TAG('m', 'p', '4', 'v') // MPEG-4 Video
 #define MOV_MP4A MOV_TAG('m', 'p', '4', 'a') // AAC
 #define MOV_MP4S MOV_TAG('m', 'p', '4', 's') // ISO/IEC 14496-14:2003(E) 5.6 Sample Description Boxes (p14)
+#define MOV_OPUS MOV_TAG('O', 'p', 'u', 's') // http://www.opus-codec.org/docs/opus_in_isobmff.html
+#define MOV_AV1  MOV_TAG('a', 'v', '0', '1') // https://aomediacodec.github.io/av1-isobmff
 
 // ISO/IEC 14496-1:2010(E) 7.2.6.6 DecoderConfigDescriptor
 // Table 6 - streamType Values (p51)
@@ -101,6 +103,8 @@ enum
 #define MOV_TRUN_FLAG_SAMPLE_SIZE_PRESENT						0x0200
 #define MOV_TRUN_FLAG_SAMPLE_FLAGS_PRESENT						0x0400
 #define MOV_TRUN_FLAG_SAMPLE_COMPOSITION_TIME_OFFSET_PRESENT	0x0800
+
+#define MOV_TRACK_FLAG_CTTS_V1							0x0001 //ctts version 1
 
 struct mov_stbl_t
 {
@@ -169,6 +173,8 @@ struct mov_track_t
     int64_t tfdt_dts; // tfdt baseMediaDecodeTime
     int64_t start_dts; // write fmp4 only
     uint64_t offset; // write only
+
+	unsigned int flags;
 };
 
 struct mov_t
@@ -210,6 +216,7 @@ int mov_read_cslg(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_stss(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_avcc(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_hvcc(struct mov_t* mov, const struct mov_box_t* box);
+int mov_read_av1c(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_tx3g(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_trex(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_leva(struct mov_t* mov, const struct mov_box_t* box);
@@ -220,6 +227,7 @@ int mov_read_sidx(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_mfhd(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_tfdt(struct mov_t* mov, const struct mov_box_t* box);
 int mov_read_mehd(struct mov_t* mov, const struct mov_box_t* box);
+int mov_read_dops(struct mov_t* mov, const struct mov_box_t* box);
 
 size_t mov_write_ftyp(const struct mov_t* mov);
 size_t mov_write_mvhd(const struct mov_t* mov);
@@ -243,6 +251,7 @@ size_t mov_write_stsz(const struct mov_t* mov);
 size_t mov_write_esds(const struct mov_t* mov);
 size_t mov_write_avcc(const struct mov_t* mov);
 size_t mov_write_hvcc(const struct mov_t* mov);
+size_t mov_write_av1c(const struct mov_t* mov);
 size_t mov_write_tx3g(const struct mov_t* mov);
 size_t mov_write_trex(const struct mov_t* mov);
 size_t mov_write_tfhd(const struct mov_t* mov);
@@ -257,6 +266,7 @@ size_t mov_write_stbl(const struct mov_t* mov);
 size_t mov_write_minf(const struct mov_t* mov);
 size_t mov_write_mdia(const struct mov_t* mov);
 size_t mov_write_trak(const struct mov_t* mov);
+size_t mov_write_dops(const struct mov_t* mov);
 
 uint32_t mov_build_stts(struct mov_track_t* track);
 uint32_t mov_build_ctts(struct mov_track_t* track);
